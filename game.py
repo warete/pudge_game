@@ -55,6 +55,9 @@ class Game:
 
     def run(self):
         pixel_font = pygame.font.Font(os.path.join('fonts', 'pixel.ttf'), 35)
+
+        life = pygame.image.load(os.path.join('images', 'lives.png'))
+        life_x_start = self.window_sizes[0] / 2 - (life.get_width() + 5) * 3
         while self.isRunning:
             self.screen.fill(self.bg_color)
 
@@ -62,6 +65,9 @@ class Game:
 
             points_text = pixel_font.render('Pudges banned: ' + str(self.points), False, (255, 255, 255))
             self.screen.blit(points_text, points_text.get_rect(center=(self.window_sizes[0] / 2, 17)))
+
+            for i in range(1, self.lifes + 1):
+                self.screen.blit(life, (life_x_start + ((life.get_width() + 5) * i), 70))
 
             self.enemy.draw(self.screen)
             pygame.display.flip()
