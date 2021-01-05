@@ -55,10 +55,19 @@ class Enemy:
 class Pudge(Enemy):
     img_path = os.path.join('images', 'pudge.png')
 
+    def on_click(self, lifes, points):
+        return lifes, points+1
+
 
 class Techie(Enemy):
     img_path = os.path.join('images', 'techies.png')
 
+    def on_click(self, lifes, points):
+        return 0, points
+
 
 class Heal(Enemy):
     img_path = os.path.join('images', 'heal.jpg')
+
+    def on_click(self, lifes, points):
+        return lifes if lifes == 3 else lifes + 1, points
