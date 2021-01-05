@@ -1,5 +1,6 @@
 import pygame
 import utils
+import os
 from enemy import get_random_enemy
 
 
@@ -16,6 +17,9 @@ class Game:
     enemy = None
     isRunning = True
 
+    lifes = 3
+    points = 0
+
     def __init__(self, max_fps=30, window_sizes=(600, 700), field_cells_count=5):
         self.max_fps = max_fps
         self.window_sizes = window_sizes
@@ -24,6 +28,8 @@ class Game:
         self.field_cell_size = int(min(self.window_sizes) / self.field_cells_count)
 
         pygame.init()
+        pygame.font.init()
+        pygame.display.set_caption('PudgeGame')
         pygame.time.set_timer(self.need_reload_field_event['code'], self.need_reload_field_event['time'])
         self.screen = pygame.display.set_mode(self.window_sizes)
         self.clock = pygame.time.Clock()
@@ -42,12 +48,20 @@ class Game:
                 self.isRunning = False
             if event.type == self.need_reload_field_event['code']:
                 self.reload_enemy_and_field()
+            if event.type == pygame.MOUSEBUTTONUP:
+                pos = event.pos
+                if self.enemy.get_rect().collidepoint(pos[0], pos[1]):
+                    self.lifes, self.points = self.enemy.on_click(self.lifes, self.points)
 
     def run(self):
+        pixel_font = pygame.font.Font(os.path.join('fonts', 'pixel.ttf'), 35)
         while self.isRunning:
             self.screen.fill(self.bg_color)
 
             self.handle_events()
+
+            points_text = pixel_font.render('Pudges banned: ' + str(self.points), False, (255, 255, 255))
+            self.screen.blit(points_text, points_text.get_rect(center=(self.window_sizes[0] / 2, 17)))
 
             self.enemy.draw(self.screen)
             pygame.display.flip()
