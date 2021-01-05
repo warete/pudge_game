@@ -1,5 +1,5 @@
 import random
-
+import os
 import pygame
 
 
@@ -53,12 +53,12 @@ class Enemy:
 
 
 class Pudge(Enemy):
-    img_path = 'images/pudge.png'
+    img_path = os.path.join('images', 'pudge.png')
 
 
 class Techie(Enemy):
-    img_path = 'images/techies.png'
+    img_path = os.path.join('images', 'techies.png')
 
 
 class Heal(Enemy):
-    img_path = 'images/heal.jpg'
+    img_path = os.path.join('images', 'heal.jpg')
