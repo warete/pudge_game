@@ -34,6 +34,12 @@ class Game:
         pygame.time.set_timer(self.need_reload_field_event['code'], self.need_reload_field_event['time'])
         self.screen = pygame.display.set_mode(self.window_sizes)
         self.clock = pygame.time.Clock()
+
+        self.optimus_font_big = pygame.font.Font(os.path.join('fonts', 'OptimusPrinceps.ttf'), 120)
+        self.optimus_font = pygame.font.Font(os.path.join('fonts', 'OptimusPrinceps.ttf'), 35)
+
+        self.retry_btn = self.optimus_font.render('Retry?', False, (173, 0, 0))
+
         self.start_game()
 
     def start_game(self):
@@ -57,19 +63,25 @@ class Game:
                 self.reload_enemy_and_field()
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = event.pos
-                if self.enemy.get_rect().collidepoint(pos[0], pos[1]):
-                    self.lifes, self.points = self.enemy.on_click(self.lifes, self.points)
+                if self.isGameStarted:
+                    if self.enemy.get_rect().collidepoint(pos[0], pos[1]):
+                        self.lifes, self.points = self.enemy.on_click(self.lifes, self.points)
+                    else:
+                        self.lifes -= 1
+                else:
+                    self.start_game()
 
     def check_game_over(self):
         if self.lifes == 0:
             self.isGameStarted = False
-            optimus_font_big = pygame.font.Font(os.path.join('fonts', 'OptimusPrinceps.ttf'), 120)
-            optimus_font = pygame.font.Font(os.path.join('fonts', 'OptimusPrinceps.ttf'), 35)
 
-            points_text = optimus_font.render('Pudges banned: ' + str(self.points), False, (173, 0, 0))
+            points_text = self.optimus_font.render('Pudges banned: ' + str(self.points), False, (173, 0, 0))
             self.screen.blit(points_text, points_text.get_rect(center=(self.window_sizes[0] / 2, 35)))
 
-            gameover_text = optimus_font_big.render('You died', False, (173, 0, 0))
+            self.screen.blit(self.retry_btn,
+                             self.retry_btn.get_rect(center=(self.window_sizes[0] / 2, self.window_sizes[1] * 0.75)))
+
+            gameover_text = self.optimus_font_big.render('You died', False, (173, 0, 0))
             self.screen.blit(gameover_text,
                              gameover_text.get_rect(center=(self.window_sizes[0] / 2, self.window_sizes[1] / 2)))
 
