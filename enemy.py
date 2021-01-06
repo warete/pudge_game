@@ -25,6 +25,7 @@ class Enemy:
         self.width = width
         self.height = height
         self.rect = pygame.Rect((0, 0), (self.width, self.height))
+        self.is_clicked = False
 
     def get_rect(self):
         return self.rect
@@ -56,18 +57,30 @@ class Pudge(Enemy):
     img_path = os.path.join('images', 'pudge.png')
 
     def on_click(self, lifes, points):
-        return lifes, points+1
+        if not self.is_clicked:
+            self.is_clicked = True
+            return lifes, points + 1
+        else:
+            return lifes, points
 
 
 class Techie(Enemy):
     img_path = os.path.join('images', 'techies.png')
 
     def on_click(self, lifes, points):
-        return 0, points
+        if not self.is_clicked:
+            self.is_clicked = True
+            return 0, points
+        else:
+            return lifes, points
 
 
 class Heal(Enemy):
     img_path = os.path.join('images', 'heal.jpg')
 
     def on_click(self, lifes, points):
-        return lifes if lifes == 3 else lifes + 1, points
+        if not self.is_clicked:
+            self.is_clicked = True
+            return lifes if lifes == 3 else lifes + 1, points
+        else:
+            return lifes, points
