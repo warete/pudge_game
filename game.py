@@ -19,6 +19,7 @@ class Game:
 
     lifes = 3
     points = 0
+    isGameStarted = False
 
     def __init__(self, max_fps=30, window_sizes=(600, 700), field_cells_count=5):
         self.max_fps = max_fps
@@ -33,6 +34,12 @@ class Game:
         pygame.time.set_timer(self.need_reload_field_event['code'], self.need_reload_field_event['time'])
         self.screen = pygame.display.set_mode(self.window_sizes)
         self.clock = pygame.time.Clock()
+        self.start_game()
+
+    def start_game(self):
+        self.isGameStarted = True
+        self.lifes = 3
+        self.points = 0
         self.reload_enemy_and_field()
 
     def reload_enemy_and_field(self):
@@ -53,6 +60,19 @@ class Game:
                 if self.enemy.get_rect().collidepoint(pos[0], pos[1]):
                     self.lifes, self.points = self.enemy.on_click(self.lifes, self.points)
 
+    def check_game_over(self):
+        if self.lifes == 0:
+            self.isGameStarted = False
+            optimus_font_big = pygame.font.Font(os.path.join('fonts', 'OptimusPrinceps.ttf'), 120)
+            optimus_font = pygame.font.Font(os.path.join('fonts', 'OptimusPrinceps.ttf'), 35)
+
+            points_text = optimus_font.render('Pudges banned: ' + str(self.points), False, (173, 0, 0))
+            self.screen.blit(points_text, points_text.get_rect(center=(self.window_sizes[0] / 2, 35)))
+
+            gameover_text = optimus_font_big.render('You died', False, (173, 0, 0))
+            self.screen.blit(gameover_text,
+                             gameover_text.get_rect(center=(self.window_sizes[0] / 2, self.window_sizes[1] / 2)))
+
     def run(self):
         pixel_font = pygame.font.Font(os.path.join('fonts', 'pixel.ttf'), 35)
 
@@ -63,13 +83,17 @@ class Game:
 
             self.handle_events()
 
-            points_text = pixel_font.render('Pudges banned: ' + str(self.points), False, (255, 255, 255))
-            self.screen.blit(points_text, points_text.get_rect(center=(self.window_sizes[0] / 2, 17)))
+            self.check_game_over()
 
-            for i in range(1, self.lifes + 1):
-                self.screen.blit(life, (life_x_start + ((life.get_width() + 5) * i), 70))
+            if self.isGameStarted:
+                points_text = pixel_font.render('Pudges banned: ' + str(self.points), False, (255, 255, 255))
+                self.screen.blit(points_text, points_text.get_rect(center=(self.window_sizes[0] / 2, 17)))
 
-            self.enemy.draw(self.screen)
+                for i in range(1, self.lifes + 1):
+                    self.screen.blit(life, (life_x_start + ((life.get_width() + 5) * i), 70))
+
+                self.enemy.draw(self.screen)
+
             pygame.display.flip()
             self.clock.tick(self.max_fps)
 
